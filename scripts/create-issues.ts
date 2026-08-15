@@ -113,7 +113,8 @@ function parseFrontmatter(
 	raw: string,
 	file: string,
 ): { data: Record<string, string>; body: string } {
-	const match = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)
+	console.log(raw);
+	const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/)
 	if (!match) {
 		throw new Error(`${file}: frontmatter (--- ... ---) が見つかりません`)
 	}
@@ -144,6 +145,7 @@ function loadIssueDefs(): IssueDef[] {
 
 	for (const file of files) {
 		const raw = readFileSync(join(ISSUES_DIR, file), "utf-8")
+		console.log(raw)
 		try {
 			const { data, body } = parseFrontmatter(raw, file)
 
