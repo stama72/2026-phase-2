@@ -9,3 +9,12 @@
 *.db
 
 .env
+
+# learning-mentor:gitignore begin
+# 学習メンターの個人導入物。配置先は人によって違うので追跡しない
+/.claude/
+/AGENTS.md
+/.codex/config.toml
+learning-mentor-v0.1.2/
+learning-mentor-v0.2.0/
+# learning-mentor:gitignore end

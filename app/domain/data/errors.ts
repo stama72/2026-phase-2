@@ -1,4 +1,4 @@
-import { BaseError } from "~/lib/error"
+import { BaseError } from "~/lib/error";
 
 export class RepositoryError extends BaseError {
 	name = "RepositoryError"
@@ -18,6 +18,10 @@ export class PasswordConfirmationMismatchError extends BaseError {
 
 export class InvalidPasswordError extends BaseError {
 	name = "InvalidPasswordError"
+}
+
+export class InvalidMailAddressError extends BaseError {
+	name = "InvalidMailAddressError"
 }
 
 export class InvalidSessionTokenError extends BaseError {
