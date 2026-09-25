@@ -1,21 +1,22 @@
-import { LoaderCircleIcon, SendIcon } from "lucide-react"
-import { Form, Link, redirect, useNavigation } from "react-router"
-import { PasswordInput } from "~/components/common/PasswordInput"
-import { Button } from "~/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card"
+import { LoaderCircleIcon, SendIcon } from "lucide-react";
+import { Form, Link, redirect, useNavigation } from "react-router";
+import { PasswordInput } from "~/components/common/PasswordInput";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import {
-	Field,
-	FieldError,
-	FieldGroup,
-	FieldLabel,
-	FieldSet,
-} from "~/components/ui/field"
-import { Input } from "~/components/ui/input"
-import { PasswordConfirmationMismatchError } from "~/domain/data/errors"
-import { fail } from "~/lib/result"
-import { repositoryContext } from "~/middlewares/repositories"
-import { commitSession, getSession } from "~/sessions/sessions"
-import type { Route } from "./+types/register"
+    Field,
+    FieldError,
+    FieldGroup,
+    FieldLabel,
+    FieldSet,
+} from "~/components/ui/field";
+import { Input } from "~/components/ui/input";
+import { PasswordConfirmationMismatchError, InvalidMailAddressError } from "~/domain/data/errors";
+import { fail } from "~/lib/result";
+import { repositoryContext } from "~/middlewares/repositories";
+import { commitSession, getSession } from "~/sessions/sessions";
+import type { Route } from "./+types/register";
+import { validateMailSchema } from "~/domain/service/validate-mail-schema";
 
 export default function RegisterPage({ actionData }: Route.ComponentProps) {
 	const navigation = useNavigation()
@@ -97,7 +98,7 @@ export default function RegisterPage({ actionData }: Route.ComponentProps) {
 export async function action({ request, context }: Route.ActionArgs) {
 	const formData = await request.formData()
 	const name = String(formData.get("name") || "")
-	const mail = String(formData.get("mail") || "")
+	const mail = String(formData.get("mail") || "").toLowerCase()
 	const password = String(formData.get("password") || "")
 	const passwordConfirm = String(formData.get("passwordConfirm") || "")
 
@@ -110,6 +111,17 @@ export async function action({ request, context }: Route.ActionArgs) {
 			),
 		}
 	}
+  const mailValidation = validateMailSchema(mail)
+	if (!mailValidation.success) {
+		return {
+			result: fail(
+				new InvalidMailAddressError(
+					mailValidation.issues[0].message || "メールアドレスの形式が正しくありません",
+				),
+			),
+		}
+	}
+
 
 	const { userRepository } = context.get(repositoryContext)
 
